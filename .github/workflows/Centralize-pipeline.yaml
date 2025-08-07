@@ -8,7 +8,6 @@ on:
 jobs:
   handle_pr_event:
     runs-on: ubuntu-latest
-
     steps:
       - name: Print PR Event Details
         run: |
@@ -22,12 +21,9 @@ jobs:
         run: |
           if [ "${{ github.event.client_payload.pr_event }}" == "opened" ]; then
             echo "Running PR Creation Logic (Terraform Plan)"
-            # Run terraform plan for PR creation
             terraform init
             terraform plan -out=pr-plan.out
           elif [ "${{ github.event.client_payload.pr_event }}" == "closed" ]; then
             echo "Running PR Merge Logic (Terraform Apply)"
-            # Run terraform apply for PR merge
             terraform apply -auto-approve pr-plan.out
           fi
-    
