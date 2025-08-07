@@ -1,0 +1,33 @@
+name: Central Pipeline - Handle PR Events
+
+on:
+  repository_dispatch:
+    types:
+      - pr_event  # Custom event triggered by child repos (PR events)
+
+jobs:
+  handle_pr_event:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print PR Event Details
+        run: |
+          echo "Triggered by: ${{ github.event.client_payload.triggered_by }}"
+          echo "PR Event: ${{ github.event.client_payload.pr_event }}"
+          echo "PR Number: ${{ github.event.client_payload.pr_number }}"
+          echo "Commit SHA: ${{ github.event.client_payload.commit_sha }}"
+          echo "Branch: ${{ github.event.client_payload.branch }}"
+
+      - name: Run Logic Based on PR Event
+        run: |
+          if [ "${{ github.event.client_payload.pr_event }}" == "opened" ]; then
+            echo "Running PR Creation Logic (Terraform Plan)"
+            # Run terraform plan for PR creation
+            terraform init
+            terraform plan -out=pr-plan.out
+          elif [ "${{ github.event.client_payload.pr_event }}" == "closed" ]; then
+            echo "Running PR Merge Logic (Terraform Apply)"
+            # Run terraform apply for PR merge
+            terraform apply -auto-approve pr-plan.out
+          fi
+    
