@@ -2,8 +2,8 @@ name: Central Pipeline - Handle PR Events
 
 on:
   repository_dispatch:
-    types:
-      - pr_event  # Custom event triggered by child repos (PR events)
+    types: [pr_event]
+    # Custom event triggered by child repos (PR events)
 
 jobs:
   handle_pr_event:
